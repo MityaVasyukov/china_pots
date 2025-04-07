@@ -3,6 +3,11 @@
         wd <- getwd()
         inpath <- file.path(wd, "input")
         outpath <- file.path(wd, "output")
+
+        if (!dir.exists(outpath)) {
+            dir.create(outpath, recursive = TRUE)
+        }
+
     
     # Load dependencies
         source("load_pckgs.r")
