@@ -17,7 +17,7 @@ dryOrWet <- function(df, mode ) {
     case_when_string <- paste( "case_when(", buildCondition(dry_wet_conditions[-8,]), ")" ) # without feet
 
     dry_or_wet <- df %>%
-        dplyr::group_by(across(all_of(group_vars))) %>%
+        dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) %>%
         dplyr::mutate(
             state = eval(parse_expr(case_when_string))
         )
@@ -44,9 +44,9 @@ dryOrWet <- function(df, mode ) {
             names_to = "condition",
             values_to = "value"
         ) %>%
-        dplyr::group_by(across(all_of(group_vars)), condition) %>%
+        dplyr::group_by(dplyr::across(dplyr::all_of(group_vars)), condition) %>%
         dplyr::summarise(total = sum(value), .groups = 'drop') %>%
-        dplyr::group_by(across(all_of(group_vars))) %>%
+        dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) %>%
         dplyr::mutate(percentage = total / sum(total) * 100)
 
     if(mode != "by_site") {

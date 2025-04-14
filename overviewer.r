@@ -6,6 +6,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
             source("parse_bounds.r")
             source("sum_non_numeric.r")
             source("string_processor.r")
+            source("dryOrWet.r")
             dependencies <-  c("readxl", "writexl", "dplyr", "tidyr", "stringr", "scales", "ggplot2", "Hmisc", "ggcorrplot", "grid", "gridExtra", "viridis")
             invisible(lapply(dependencies, load_pkg))
 

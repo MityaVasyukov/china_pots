@@ -2,7 +2,8 @@
     info_and_carb_data_file_name <- "Data.xlsx" # the name of your excel file with info data
     petro_data_file_name <- "petrography.xlsx" # the name for petrgography data file
     gcms_data_file_name <- "Preliminary analysis Shang and Zhou.xlsx" # the name for gcms data
-
+        inpath <- file.path(wd, "input")
+        outpath <- file.path(wd, "output")
 # plot settings
     parts <- c("lip", "neck", "shoulder", "body", "foot", "crotch") # sequence of vessel parts
     gap <- 250 # gap used for plotting
@@ -15,7 +16,7 @@
 
 # procesing setting
     print_res <- TRUE
-excluded_vars <- c("c.conf", "g.conf")
+    excluded_vars <- c("c.conf", "g.conf")
 # dictionaries
     # The rule set for dry/wet assignment
         dry_wet_conditions <- data.frame(
@@ -114,3 +115,17 @@ excluded_vars <- c("c.conf", "g.conf")
             "p.microgranite"          = list(type = "lgl", units = NULL, options = c("TRUE", "FALSE"), descr = "True if 'microgranite' was mentioned in the comments"),
             "p.ksp"                   = list(type = "lgl", units = NULL, options = c("TRUE", "FALSE"), descr = "True if 'ksp' was mentioned in the comments")
         )
+
+    # GCMS var description
+    gcms_spectra_var_info <- list(
+        "seqNum" = list(units = NULL, descr = "Unique sequence number (ID)"),
+        "acquisitionNum" = list(units = NULL, descr = "Unique sequence number (ID)"),
+        "msLevel" = list(units = NULL, descr = "The level of mass spectrometry data: level 1 meaning only one stage of mass spectrometry was performed (no MS/MS fragmentation)"),
+        "polarity" = list(units = NULL, descr = "The value -1 indicates the scans were recorded in negative ion mode"),
+        "peaksCount" = list(units = NULL, descr = "How many peaks (detected ions) were recorded in each scan"),
+        "totIonCurrent" = list(units = NULL, descr = "The total ion current, representing the overall signal strength"),
+        "retentionTime" = list(units = "s", descr = "The time taken for a solute to pass through a chromatography column"),
+        "basePeakMZ" = list(units = NULL, descr = "The mass-to-charge (m/z) ratio of the most intense peak"),
+        "basePeakIntensity" = list(units = NULL, descr = "The intensity of the most intense peak"),
+        "centroided" = list(units = NULL, descr = "TRUE indicates that the data points have already been processed to represent peak centers")
+    )
