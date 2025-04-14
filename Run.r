@@ -1,7 +1,6 @@
 ###   SETTINGS AND LOADINGS   ###
     # Path settings
         wd <- getwd()
-
     # Load dependencies
         source("load_pckgs.r")
         source("settings.r")
