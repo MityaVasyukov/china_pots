@@ -144,17 +144,22 @@ spec_overviewer <- function(index_tbl, num) {
     # grid plotting
         layout_matrix <- matrix(c(3, 1, NA, 2), nrow = 2, byrow = TRUE)
         combined_plot <- gridExtra::arrangeGrob(p1, p2, p3, layout_matrix = layout_matrix)
-        save_path = file.path(outpath, paste0(sub("\\..*$", "", file_name), "_spectrum_overview.png"))
+        
 
-        ggsave(
-            filename = save_path,
-            plot = combined_plot,
-            width = 16,
-            height = 16,
-            dpi = 300
-        )
+    #    ggsave(
+    #        filename = save_path,
+    #        plot = combined_plot,
+    #        width = 16,
+    #        height = 16,
+    #        dpi = 300
+   #     )
 
-        message("Image saved to: ", basename(save_path))
-        img <- magick::image_read(save_path)
-        plot(img)
+    #    message("Image saved to: ", basename(save_path))
+   #     img <- magick::image_read(save_path)
+   #     plot(img)
+
+
+    results <- list(plot = combined_plot)
+    return(results)
+
 }

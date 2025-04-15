@@ -1,3 +1,6 @@
+path <- "p:/2025-vessels/spectra/mz"
+
+
 # file_names
     info_and_carb_data_file_name <- "Data.xlsx" # the name of your excel file with info data
     petro_data_file_name <- "petrography.xlsx" # the name for petrgography data file

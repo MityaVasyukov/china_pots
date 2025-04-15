@@ -13,7 +13,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
         ## data
             raw_df <- readxl::read_excel(file.path(inpath, info_and_carb_data_file_name), na = "")
             raw_petro <- readxl::read_excel(file.path(inpath, petro_data_file_name), na = "")
-            raw_arch <- dryOrWet(raw_df, "by_site_and_period")$data %>% dplyr::ungroup()
+            raw_arch <- dryOrWet("by_site_and_period")$data %>% dplyr::ungroup()
             raw_gcms <- readxl::read_excel(file.path(inpath, gcms_data_file_name), sheet = "Data", col_names = T, na = "")
         
             if (talky) {
@@ -217,8 +217,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
             } else {
                 results$data <- data
             }
-#!
-glimpse(data)
+
             if (talky) {
                 message("⚠️ inner joining was used to link the data, use left_join to conserve unmatched records")
                 
@@ -395,13 +394,21 @@ glimpse(data)
         
         merged_plots <- list()
 
+
+        if (!dir.exists(file.path(savepath, "overview"))) {
+        dir.create(file.path(savepath, "overview"), recursive = TRUE)
+        }
+
+
+
         for (prefix in prefixes) {
             plots_for_prefix <- non_group_plots[ sapply(plot_names, function(x) get_prefix(x) == prefix) ]
-            file_name <- file.path(savepath, paste0(prefix, "_plots.tiff"))
+            file_name <- file.path(savepath, "overview", paste0(prefix, "_plots.png"))
 
             merged_plot <- gridExtra::arrangeGrob(grobs = plots_for_prefix, ncol = 4)
 
-            tiff(filename = file_name, width = 30, height = 20, units = "cm", res = 300)
+            #tiff(filename = file_name, width = 30, height = 20, units = "cm", res = 300)
+            png(filename = file_name, width = 30, height = 20, units = "cm", res = 300)
             grid::grid.draw(merged_plot)
             dev.off()
             
@@ -409,14 +416,15 @@ glimpse(data)
         }
 
        if (length(group_plots) > 0) {
-            file_name <- file.path(savepath, "_group_plots.tiff")
+            file_name <- file.path(savepath, "overview", "group_plots.png")
             merged_group_plot <- gridExtra::arrangeGrob(grobs = group_plots, ncol = length(group_plots))
-            tiff(filename = file_name, width = 30, height = 10, units = "cm", res = 300)
+            #tiff(filename = file_name, width = 30, height = 10, units = "cm", res = 300)
+            png(filename = file_name, width = 30, height = 10, units = "cm", res = 300)
             grid::grid.draw(merged_group_plot)
             dev.off()
             }
 
         results$merged_plots <- merged_plots
-        cat("💾 Files have been saved to", outpath)
+        if (talky) cat("💾 Files have been saved to", outpath)
         return(results)
 }

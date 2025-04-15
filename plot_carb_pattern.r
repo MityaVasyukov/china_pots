@@ -14,7 +14,6 @@ plot_carb_pattern <- function(df, poly, site = NULL, period = NULL,
             plot <- ggplot2::ggplot()
             return(plot)
             stop("No site, no period")
-            #! just stop("Error : no data for plotting")
         } else {
             counts <- df %>%
                 dplyr::filter(site_name == !!site & period == !!period) %>%

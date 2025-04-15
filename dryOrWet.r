@@ -1,10 +1,14 @@
-dryOrWet <- function(df, mode ) {
+dryOrWet <- function(mode) {
     # loadings & settings
         source("buildCondition.r")
         source("load_pckgs.r")
-        dependencies <- c("dplyr", "tidyr", "ggplot2", "rlang", "hrbrthemes", "ggtext", "ggpubr", "colorspace", "patchwork")
+        source("settings.r")
+        source("plot_saver.r")
+        dependencies <- c("readxl", "dplyr", "tidyr", "ggplot2", "rlang", "hrbrthemes", "ggtext", "ggpubr", "colorspace", "patchwork", "knitr")
         invisible(lapply(dependencies, load_pkg))
         grDevices::windowsFonts(opensans = windowsFont("Open Sans"))
+        
+        df <- readxl::read_excel(file.path(inpath, info_and_carb_data_file_name), na = "")
 
     group_vars <- switch(
         mode,
@@ -144,12 +148,7 @@ dryOrWet <- function(df, mode ) {
             rows = NULL,
             theme = ggpubr::ttheme(
                 "light",
-                padding = ggplot2::unit(c(4, 6), "mm")#,
-            #   colnames.style = colnames_style(
-            #       color = "white",
-            #       fill = "#4C72B0",
-            #       face = "bold", size = 10),
-            #tbody.style = tbody_style(color = "black", fill = c("#EAEAF2", "#FFFFFF"), size = 10)
+                padding = ggplot2::unit(c(4, 6), "mm")
             )
         ) %>%
         ggpubr::table_cell_bg(
@@ -165,61 +164,9 @@ dryOrWet <- function(df, mode ) {
             color = "white"
         )
 
-    annotations <- c(
-        ggplot2::annotate(
-            "text",
-            x=0.5,
-            y=-0.3,
-            label = "DRY = dry3 + 0.75*dry2 + 0.5*dry1",
-            color = "blue",
-            size = 4,
-            family = "opensans"
-        ),
-        ggplot2::annotate(
-            "text",
-            x=0.5,
-            y=-0.4,
-            label = "WET = wet3 + 0.75*wet2 + 0.5*wet1",
-            color = "blue",
-            size = 4,
-            family = "opensans"
-        ),
-        ggplot2::annotate(
-            "text",
-            x=0.5,
-            y=-2,
-            label = paste( "Fisher's Exact Test p-value:", pvalue ),
-            color = if(pvalue <= 0.05) {"red"} else {"black"},
-            size = 5,
-            family = "opensans"
-        )
-    )
+    left_col <- (table_cond + theme(plot.margin = unit(c(0,0,100,0), "pt")))  / table_sum 
+    combined_plot <- left_col | piecharts
 
-    design <- c(
-        patchwork::area(1,2,3,2), # piechart
-        patchwork::area(1,1,1,1), # table conditions
-        patchwork::area(2,1,2,1), # annotations
-        patchwork::area(3,1,3,1) # table sum
-    )
-
-    combined_plot <- 
-        piecharts +
-        table_cond +
-        annotations +
-        table_sum +
-        patchwork::plot_layout(
-            design = design,
-            heights=c(3,6,0.1),
-            widths = c(1, 1)
-        ) 
-    
-    plot_name <- paste0("dry_wet_", paste( group_vars, collapse = "+" ))
-
-    result <- list(
-        name = plot_name,
-        plot = combined_plot,
-        data = dry_or_wet
-    )
-
-    return(result)
+    results <- list (data = dry_or_wet, plot = combined_plot)
+    return(results)
 }

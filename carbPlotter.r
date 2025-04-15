@@ -1,15 +1,19 @@
-carb_plotter <- function(df, mode = "by_site_and_period", gap = 250) {
+carb_plotter <- function(mode = "by_site_and_period", gap = 250) {
 
     modes <- c("by_site_and_period", "by_site", "by_period")
 
     # loadings
-        data <- df
         source("plot_carb_pattern.r")
+        source("settings.r")
         source("load_pckgs.r")
-        dependencies <- c("dplyr", "tidyr", "gridExtra", "purrr", "sysfonts", "showtext")
+        source("plot_saver.r")
+        dependencies <- c("readxl", "dplyr", "tidyr", "ggplot2", "grid", "gridExtra", "purrr", "sysfonts", "showtext", "knitr")
         invisible(lapply(dependencies, load_pkg))
         sysfonts::font_add_google("Open Sans", "opensans")
         showtext::showtext_auto()
+        grDevices::windowsFonts(opensans = windowsFont("Open Sans"))
+
+        data <- readxl::read_excel(file.path(inpath, info_and_carb_data_file_name), na = "")
 
     # filtering data
         carb <- data %>%
@@ -161,37 +165,28 @@ carb_plotter <- function(df, mode = "by_site_and_period", gap = 250) {
                     })
             }
         }
-
-        do.call(gridExtra::grid.arrange, c(plots, ncol = 2, nrow = 2))
-
-        labels_gen <- labels[1:6,]
-        rownames(labels_gen) <- 1:nrow(labels_gen)
-        labels_gen$y <- c(0.868, 0.848, 0.817, 0.725, 0.615, 0.595)
-        labels_gen$x <- rep(0.5, 6)
         
-        for (i in  as.numeric(rownames(labels_gen))) {
-            grid::grid.text(
-                label=labels_gen[i,3],
-                x = labels_gen[i,1],
-                y = labels_gen[i,2],
-                just = c("center", "top"),
-                gp = grid::gpar(fontsize = 14)
-            )
-        }
-
-        grid::grid.text(
-            label="% of carbonized (total clear and carb). Darker color means larger percentage of carbonized sherds;",
-            x = 0.65,
-            y = 0.02,
+    # Cook the plots
+        g <- arrangeGrob(grobs = plots, ncol = 2, nrow = 2)
+        label_grob <- textGrob(
+            "% of carbonized (total clear and carb). Darker color means larger percentage of carbonized sherds;",
+            x = 0.65, y = 0.02,
             just = c("right", "bottom"),
-            gp = grid::gpar(fontsize = 12))
-
-        grid::grid.text(
-            label = " this color means NA ",
-            x = 0.65,
-            y = 0.02,
+            gp = gpar(fontsize = 12)
+        )
+        na_grob <- textGrob(
+            " cross-lining means NA ",
+            x = 0.65, y = 0.02,
             just = c("left", "bottom"),
-            gp = grid::gpar(fontsize = 12, col = na_col)
+            gp = gpar(fontsize = 12, col = "red")
         )
 
+        final_grob <- arrangeGrob(
+            g, label_grob, na_grob,
+            ncol = 1,
+            heights = unit(c(0.9, 0.05, 0.05), "npc")
+        )
+
+        results <- list(data = NULL, plot = final_grob)
+        return(results)
 }

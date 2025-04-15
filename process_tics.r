@@ -183,19 +183,21 @@ process_tics <- function(
             # Combine the plots
                 combined_plot <- p3 + p1 + p4 + p2 + plot_layout(ncol = 2, nrow = 2)
                 
-                if (!is.null(savepath)) {
-                    save_path = file.path(savepath, "PCA_tic.png")
+        #        if (!is.null(savepath)) {
+         #           save_path = file.path(savepath, "PCA_tic.png")
 
-                    ggplot2::ggsave(
-                        filename = save_path,
-                        plot = combined_plot,
-                        width = 16,
-                        height = 16,
-                        dpi = 300
-                    )
+          #          ggplot2::ggsave(
+         #               filename = save_path,
+         #               plot = combined_plot,
+         #               width = 16,
+          #              height = 16,
+         #               dpi = 300
+         #           )
 
-                    message("\nPlot has been saved to: ", save_path)
-                }
+         #           message("\nPlot has been saved to: ", save_path)
+         #       }
     # Plot results
-        print(combined_plot)
+
+          results <- list(plot = combined_plot)
+    return(results)
 }
