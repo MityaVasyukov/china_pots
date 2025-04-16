@@ -1,4 +1,4 @@
-# function generating a single plot, inside+outside
+## ---- singleplotcarbplotter ----
 plot_carb_pattern <- function(df, poly, site = NULL, period = NULL,
                                 x, y, perimeter_IN, perimeter_OUT, labels,
                                 cex = 10, gap = 250, na_col = "#b8241a") {

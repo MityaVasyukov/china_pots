@@ -1,3 +1,4 @@
+## ---- overviewer ----
 overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
     ### LOADINGS
         ## dependencies
@@ -16,13 +17,13 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
             raw_arch <- dryOrWet("by_site_and_period")$data %>% dplyr::ungroup()
             raw_gcms <- readxl::read_excel(file.path(inpath, gcms_data_file_name), sheet = "Data", col_names = T, na = "")
         
-            if (talky) {
-                if (all(sapply(mget(c("raw_arch", "raw_gcms", "raw_petro")), function(x) nrow(x) > 0))) {
-                    message("✅ All tables were loaded and contain records.")
-                } else {
-                    warning("❌ One or more tables are empty!")
-                }
-            }
+            #if (talky) {
+            #    if (all(sapply(mget(c("raw_arch", "raw_gcms", "raw_petro")), function(x) nrow(x) > 0))) {
+            #        message("✅ All tables were loaded and contain records.")
+            #    } else {
+            #        warning("❌ One or more tables are empty!")
+            #    }
+            #}
 
         ## result list preparing
             results <- list(
@@ -201,11 +202,11 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                 "\t p.* = Petrography analysis data"
             )
 
-            if (talky) {
-                for (line in info.variable_prefix) {
-                    cat(line, "\n")
-                }
-            }
+            #if (talky) {
+            #    for (line in info.variable_prefix) {
+            #        cat(line, "\n")
+            #    }
+            #}
 
         # Fusing
             data <- arch %>%
@@ -218,6 +219,8 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                 results$data <- data
             }
 
+            
+
             if (talky) {
                 message("⚠️ inner joining was used to link the data, use left_join to conserve unmatched records")
                 
@@ -228,7 +231,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                 cat("Carbonisation:", nrow(arch), "records\n\n")
                 cat("Max number of intersected id-s:", intersected_ids, "\n")
                 cat("Number of records in the final table:", nrow(data), "\n")
-                
+                #dplyr::glimpse(data)
                 cat("\n\n📦 Variable Descriptions:\n\n")
                 for (var in names(var_info)) {
                     info <- var_info[[var]]
@@ -425,6 +428,6 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
             }
 
         results$merged_plots <- merged_plots
-        if (talky) cat("💾 Files have been saved to", outpath)
+        #if (talky) cat("💾 Files have been saved to", outpath)
         return(results)
 }

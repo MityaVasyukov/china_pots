@@ -1,3 +1,4 @@
+## ---- specoverviewer ----
 spec_overviewer <- function(index_tbl, num) { 
     # loadings
         source("settings.r")

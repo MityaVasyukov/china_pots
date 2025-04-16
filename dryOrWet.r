@@ -1,3 +1,4 @@
+## ---- dryorwet ----
 dryOrWet <- function(mode) {
     # loadings & settings
         source("buildCondition.r")

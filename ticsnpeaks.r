@@ -1,3 +1,4 @@
+## ---- ticsnpeaks ----
 ticsnpeaks <- function(index_tbl, sdnum = 3) {
     # loadings
         # dependencies

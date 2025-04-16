@@ -1,3 +1,4 @@
+## ---- carbplotter ----
 carb_plotter <- function(mode = "by_site_and_period", gap = 250) {
 
     modes <- c("by_site_and_period", "by_site", "by_period")
@@ -167,7 +168,8 @@ carb_plotter <- function(mode = "by_site_and_period", gap = 250) {
         }
         
     # Cook the plots
-        g <- arrangeGrob(grobs = plots, ncol = 2, nrow = 2)
+        #plots <- flatten(plots)
+        g <- gridExtra::arrangeGrob(grobs = plots, ncol = 2, nrow = 2)
         label_grob <- textGrob(
             "% of carbonized (total clear and carb). Darker color means larger percentage of carbonized sherds;",
             x = 0.65, y = 0.02,
@@ -181,7 +183,7 @@ carb_plotter <- function(mode = "by_site_and_period", gap = 250) {
             gp = gpar(fontsize = 12, col = "red")
         )
 
-        final_grob <- arrangeGrob(
+        final_grob <- gridExtra::arrangeGrob(
             g, label_grob, na_grob,
             ncol = 1,
             heights = unit(c(0.9, 0.05, 0.05), "npc")

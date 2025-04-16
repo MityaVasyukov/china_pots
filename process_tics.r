@@ -1,3 +1,4 @@
+## ---- processtics ----
 process_tics <- function(
                     data = NULL,
                     index_tbl = NULL,
@@ -108,11 +109,11 @@ process_tics <- function(
             pca_summary <- summary(pca_result)
             cat("\tSummary of the first five principal components:\n")
             print(pca_summary$importance[, 1:5])
-            plot( # The variance explained by PCs
-                pca_result,
-                type = "l",
-                main = "Variance, explained by PCAs"
-                )
+            #plot( # The variance explained by PCs
+            #    pca_result,
+            #    type = "l",
+            #    main = "Variance, explained by PCAs"
+            #    )
 
         # visualization
             # Prepare the PCA data for visualisation
@@ -181,23 +182,12 @@ process_tics <- function(
                 p4 <- cowplot::plot_grid(p4_title, p4_table, ncol = 1, rel_heights = c(0.12, 1))
 
             # Combine the plots
-                combined_plot <- p3 + p1 + p4 + p2 + plot_layout(ncol = 2, nrow = 2)
-                
-        #        if (!is.null(savepath)) {
-         #           save_path = file.path(savepath, "PCA_tic.png")
+                if (only_high_tic) {
+                    combined_plot <- p3 + p1 + p4 + p2 + plot_layout(ncol = 2, nrow = 2)
+                } else {
+                    combined_plot <- p1
+                }
 
-          #          ggplot2::ggsave(
-         #               filename = save_path,
-         #               plot = combined_plot,
-         #               width = 16,
-          #              height = 16,
-         #               dpi = 300
-         #           )
-
-         #           message("\nPlot has been saved to: ", save_path)
-         #       }
-    # Plot results
-
-          results <- list(plot = combined_plot)
+        results <- list(plot = combined_plot)
     return(results)
 }

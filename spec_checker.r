@@ -1,3 +1,4 @@
+## ---- specchecker ----
 spec_checker <- function(in_path, spec_path) {
     # List mzML files
         mzml_list <- list.files(path = spec_path, pattern = "\\.mzML$", full.names = TRUE)

@@ -1,14 +1,25 @@
-<!-- Lightbox2 CSS from CDN -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
-<!-- Lightbox2 JS from CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
 <!-- Custom CSS to set images to full width -->
 <style>
-  img.full-width {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
+
+  .right-align {
+    text-align: right;
   }
+
+  .foldable.fold-hide > pre {
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #f9f9f9;
+  margin: 0.5em 0;
+  display: none;
+}
+.foldable.fold-hide.show > pre {
+  display: block;
+}
+.foldable.fold-hide > .toggle-button {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+}
+
 </style>

@@ -1,0 +1,260 @@
+---
+title: "Shang and Zhou pottery data exploration"
+description: Processing was made under R version 4.4.3 (C) 2025 The R Foundation for Statistical Computing
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+    rmdformats::downcute:
+        lightbox: true
+        toc_float: true
+        toc_depth: 4
+        number_sections: false
+        highlight: tango
+        theme: cerulean
+        code_folding: hide
+        fig_width: 10
+        fig_height: 10
+        includes:
+            in_header: custom_header.html
+---
+
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(
+  fig.cap = "",
+  dpi = 300,
+  echo = TRUE,
+  warning = TRUE,
+  message = FALSE,
+  class.message = 'foldable fold-hide',
+  class.warning = 'foldable fold-hide',
+  class.output = 'foldable fold-hide'
+)
+```
+
+# Overview
+Current file presents a workflow of the analysis made so far for the project. Though basically it was made for visualization, the main processing functions & code blocks are also present within a file, and can be verified or tested by unfolding buttons on the right.
+
+# Loadings
+These are auxillary functions for library loadings and plot saving.\
+`settings.r` contains most of the static parameters, dictionaries and conditions.
+
+```{r, class.source = 'fold-show'}
+wd <- getwd()           # Set the working directory manually if launching in R GUI
+source("load_pckgs.r")  # Load the library loader function
+source("settings.r")    # Load the settings
+source("plot_saver.r")  # Load the function saving the plots to png
+```
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("settings.r")
+```
+
+<div class="right-align">
+**Settings:**
+</div>
+
+```{r, settings, echo = TRUE}
+```
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("load_pckgs.r")
+```
+
+<div class="right-align">
+**Library loading function:**
+</div>
+
+```{r, loadpkg, echo = TRUE}
+```
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("plot_saver.r")
+```
+
+<div class="right-align">
+**Plot saving function:**
+</div>
+
+```{r, plotsaver, echo = TRUE}
+```
+
+# Analysis
+
+## Carbonization Pattern Plotter
+
+The function loads the raw data from `info_and_carb_data_file_name` (parameter set in `settings.r`) and presents mean carbonisation patterns per each vessel part using in several modes: `"by_site_and_period"`, `"by_site"`, or `"by_period"`.
+
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("carbPlotter.r")
+```
+
+<div class="right-align">
+**Carbonization Pattern Plotter Function:**
+</div>
+
+```{r, carbplotter, echo = TRUE}
+```
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("plot_carb_pattern.r")
+```
+
+<div class="right-align">
+**Carbonization Pattern Plotter Auxillary Function:**
+</div>
+
+```{r, singleplotcarbplotter, echo = TRUE}
+```
+
+```{r, class.source = 'fold-show'}
+source("carbPlotter.r")
+carb <- carb_plotter(mode = "by_site_and_period", gap = 250)
+plot_saver(carb$plot, outpath, "carb_pattern.png", 13.3, 10.7, 300)
+```
+
+## Dry or Wet Summaries
+
+The function loads the raw data from `info_and_carb_data_file_name` (parameter set in `settings.r`) and performs calculations for `dry/wet classification` based on the conditions defined in `dry_wet_conditions` (set in `settings.r`).
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("dryOrWet.r")
+```
+
+<div class="right-align">
+**Dry or Wet Function:**
+</div>
+
+```{r, dryorwet, echo = TRUE}
+```
+
+```{r, class.source = 'fold-show'}
+source("dryOrWet.r")
+drywet <- dryOrWet("by_site_and_period")
+plot_saver(drywet$plot, outpath, "dry_wet.png", 6, 5, 300)
+```
+
+## Variables Overviewer
+Here we bind all data we have from `drywet`, `petrography`, and `residue` analyses, and plot each variable.\
+For each variable name we added prefixes addressing their origin:\
+- **`i.*`**  Information about the specimen\
+- **`m.*`**  Measurements of the specimen\
+- **`c.*`**  Carbonization coloration analysis\
+- **`g.*`**  GCMS data\
+- **`p.*`**  Petrography analysis data\
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("overviewer.r")
+```
+
+<div class="right-align">
+**Variables Overviewer Function:**
+</div>
+
+```{r, overviewer, echo = TRUE}
+```
+
+<div class="right-align">
+**Variables description & data inspection**
+</div>
+```{r}
+source("overviewer.r")
+r <- overviewer(inpath, outpath, talky = T)
+overvw_plots <- list.files(file.path(outpath, "overview"), full.names = TRUE)
+imgs_markdown <- paste0("![](", overvw_plots, ")", collapse = "\n\n")
+asis_output(imgs_markdown) # Generate clickableimage HTML tags imgs_html 
+```
+
+
+## Spectral analysis
+### Overview
+GCMS data is represented with a continuous set of mass-spectra, `m/z` spectra specifically, where `m` stands for mass, and `z` stands for charge number of ions. We can present the GCMS data for a random spectrum file as a `heatmap`, where `larger intensity would mean darker color`, and where `retention time` would be `X` axis, and `m/z` would be `Y` axis. We could first look at the summed projections of such `heatmap`: summing by m\z (Y) gives us `Total Ion Chromotogram` (TIC), i.e. how many ions were detected for each time; summing by retention time (X) gives us general `m/z spectrum` of the sample.
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("spec_checker.r")
+```
+
+<div class="right-align">
+**Spectra Checker Function:**
+</div>
+
+```{r, specchecker, echo = TRUE}
+```
+
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("spec_overviewer.r")
+```
+
+<div class="right-align">
+**Spectrum Overviewer Function:**
+</div>
+
+```{r, specoverviewer, echo = TRUE}
+```
+
+
+```{r, class.source = 'fold-show'}
+source("spec_checker.r")
+spec_index <- spec_checker(inpath, path) # checks the files and returns the list of verified paths & metadata
+#print(spec_index)
+
+source("spec_overviewer.r")
+specovrw <- spec_overviewer(spec_index, 1) # provides a visualization of GCMS data for the first spectrum in the folder
+plot_saver(specovrw$plot, outpath, "spectrum_overview.png", 10, 10, 100)
+```
+
+### PCA
+We can now compare samples' TICs using Principal component analysis in order to find any clustering pattern achivied by rotation the initial variables (ion intensity per each retention time) and presenting them as principal components, which we then could attempt to interpret. The function `ticsnpeaks` fetches the data, specifically, TICs and peaks:\
+`TICs are` total ion chromatograms (the summed result of sample scanning), `peaks` are retention time ranges where these tics were showing some significant evaporation, the `sdnum` parameter set to `3` means that `ticsnpeaks` function selects only those retention times where values exceed the value of mean tic + 3 standard deviations.
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("ticsnpeaks.r")
+```
+
+<div class="right-align">
+**Teaks&Peaks Funtion:**
+</div>
+
+```{r, ticsnpeaks, echo = TRUE}
+```
+
+```{r, class.source = 'fold-show'}
+source("ticsnpeaks.r")
+e <- ticsnpeaks(spec_index, 3) # fetches tics and lists the high peaks
+summary(e) # the overall structure of function's output
+head((e$tics[[1]]), n = 30) # print first 30 rows of TIC data for the first spectrum
+print(e$peaks[[1]]) # print the list of peaks for the first spectrum
+print(e$peaks[[2]]) # print the list of peaks for the second spectrum
+```
+
+The data for the PCA should not be skewed, so we tested various approaches of descewing the data and chose the `Box-Cox transformation`. The next function does this `transformation` as well as consequent `scaling` before proceeding to `PCA` analysis.
+
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("process_tics.r")
+```
+
+<div class="right-align">
+**PCA of TICS Function:**
+</div>
+
+```{r, processtics, echo = TRUE}
+```
+
+
+```{r, class.source = 'fold-show'}
+source("process_tics.r")
+ticz <- process_tics(data = e, index_tbl = spec_index, only_high_tic = F)
+plot_saver(ticz$plot, outpath, "tics_all.png", 10, 10, 100)
+```
+
+**No prominent clustering**: With more variables than samples, PCA can overfit to noise, leading to misleading principal components. So our next step is to shrink the TIC data to only high intencity peaks of TICs, which have already been calculated by `ticsnpeaks` function above (the *hot* areas are accumulated from all the samples), for that we call `process_tics` function again with `only_high_tic` parameter set to `TRUE`.
+
+```{r, class.source = 'fold-show'}
+source("process_tics.r")
+ticz <- process_tics(data = e, index_tbl = spec_index, only_high_tic = T)
+plot_saver(ticz$plot, outpath, "tics_sel.png", 10, 10, 100)
+```
+
+Now we can see some clustering in the space of the first two principal components, where the period (Shang & Zhou) might also have an impact. First five PC-s (out of 105) explain most of the variance, and first two of them have the most pronounced power. Each principal component is a linear combination of all original variables (`total ion intencities per retention time`), where each variable is multiplied by a specific coefficient known as a `loading`. The variables with bigger absolute loadings in PC1 and PC2 have stronger impact on visual clusterization observed at the plot of PC1 and PC2. We have selected those variables, which were 0.95 to maximum loading in PC1 and PC2 and listed them as a `noteworthy peaks` retention times list, the baze_mz is also presented for those peaks. The baze_mz is what is the m/z value of the most intense peak in a given retention time. **It might be interesting to understand if the discovered noteworthy peaks do have some meaning for the residue analysis.**

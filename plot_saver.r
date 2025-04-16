@@ -1,3 +1,4 @@
+## ---- plotsaver ----
 plot_saver <- function(object, path, name, width, height, dpi) {
   source("load_pckgs.r")
   dependencies <- c("ggplot2", "knitr")
@@ -21,6 +22,5 @@ plot_saver <- function(object, path, name, width, height, dpi) {
     '</a>'
   )
   
-  # Output the HTML as is
   knitr::asis_output(html_code)
 }
