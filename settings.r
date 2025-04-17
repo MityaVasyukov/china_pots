@@ -134,3 +134,64 @@ gcms_spectra_var_info <- list(
     "basePeakIntensity" = list(units = NULL, descr = "The intensity of the most intense peak"),
     "centroided" = list(units = NULL, descr = "TRUE indicates that the data points have already been processed to represent peak centers")
 )
+
+
+
+# plot titles #! plot settings
+    plot_titles <- list(
+        "carb_pattern" = list(
+            order = 1,
+            title = "Mean Carbonization Pattern in-and-out",
+            details = "Darker color means larger percentage of carbonized sherds"
+            ),
+        "dry_wet" = list(
+            order = 2,
+            title = "Dry/Wet diagnostics summary results",
+            details = "Top table is a list of conditions defining the categorization, button table and plots show the results"
+            ),
+        "group_plots" = list(
+            order = 3,
+            title = "Combined Classification Results of Dry/Wet, Residue, and Petrography Analyses",
+            details = NULL
+            ),
+        "i_plots" = list(
+            order = 4,
+            title = "Plots of Fragment Presence in the Samples",
+            details = NULL
+            ),
+        "c_plots" = list(
+            order = 5,
+            title = "Plots of Coloration Patterns of Pottery Sherds",
+            details = NULL
+            ),
+        "m_plots" = list(
+            order = 6,
+            title = "Plots of Measurements Taken on Pottery Sherds",
+            details = NULL
+            ),
+        "p_plots" = list(
+            order = 7,
+            title = "Plots of Petrography Analysis Variables",
+            detail = NULL
+            ),
+        "r_plots" = list(
+            order = 8,
+            title = "Plots of Residue Analysis Variables",
+            details = NULL
+            ),
+        "spectrum_overview" = list(
+            order = 9,
+            title = "Heatmap representation of GCMS data of a single sample",
+            details = "Plots left (Mass Spectrum) and below (TIC) are the summations along the relevant axes"
+            ),
+        "tics_all" = list(
+            order = 10,
+            title = "Principal Component Analysis of Total Ion Chromatograms",
+            details = "Data for PCA was Box-Cox transformed and scaled"
+            ),
+        "tics_sel" = list(
+            order = 11,
+            title = "Principal Component Analysis of Only Intense Ion Signal Chromatograms",
+            details = "Data for PCA was Box-Cox transformed and scaled"
+            )
+    )

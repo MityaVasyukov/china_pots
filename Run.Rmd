@@ -5,7 +5,6 @@ date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output:
     rmdformats::downcute:
         lightbox: true
-        toc_float: true
         toc_depth: 4
         number_sections: false
         highlight: tango
@@ -43,6 +42,7 @@ wd <- getwd()           # Set the working directory manually if launching in R G
 source("load_pckgs.r")  # Load the library loader function
 source("settings.r")    # Load the settings
 source("plot_saver.r")  # Load the function saving the plots to png
+source("render_fig.r")  # Load the figure renderer function
 ```
 
 ```{r, include = FALSE, cache = FALSE}
@@ -78,6 +78,18 @@ knitr::read_chunk("plot_saver.r")
 ```{r, plotsaver, echo = TRUE}
 ```
 
+
+```{r, include = FALSE, cache = FALSE}
+knitr::read_chunk("render_fig.r")
+```
+
+<div class="right-align">
+**Figure Renderer function:**
+</div>
+
+```{r, renderfig, echo = TRUE}
+```
+
 # Analysis
 
 ## Carbonization Pattern Plotter
@@ -107,10 +119,15 @@ knitr::read_chunk("plot_carb_pattern.r")
 ```{r, singleplotcarbplotter, echo = TRUE}
 ```
 
-```{r, class.source = 'fold-show'}
+```{r}
 source("carbPlotter.r")
 carb <- carb_plotter(mode = "by_site_and_period", gap = 250)
-plot_saver(carb$plot, outpath, "carb_pattern.png", 13.3, 10.7, 300)
+filepath <- file.path(outpath, "carb_pattern.png")
+plot_saver(carb$plot, filepath, 13.3, 10.7, 300)
+```
+
+```{r, figure_1, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+render_fig(filepath)
 ```
 
 ## Dry or Wet Summaries
@@ -131,7 +148,12 @@ knitr::read_chunk("dryOrWet.r")
 ```{r, class.source = 'fold-show'}
 source("dryOrWet.r")
 drywet <- dryOrWet("by_site_and_period")
-plot_saver(drywet$plot, outpath, "dry_wet.png", 6, 5, 300)
+filepath <- file.path(outpath, "dry_wet.png")
+plot_saver(drywet$plot, filepath, 6, 5, 300)
+```
+
+```{r, figure_2, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+render_fig(filepath)
 ```
 
 ## Variables Overviewer
@@ -140,7 +162,7 @@ For each variable name we added prefixes addressing their origin:\
 - **`i.*`**  Information about the specimen\
 - **`m.*`**  Measurements of the specimen\
 - **`c.*`**  Carbonization coloration analysis\
-- **`g.*`**  GCMS data\
+- **`r.*`**  Residue analysis\
 - **`p.*`**  Petrography analysis data\
 
 ```{r, include = FALSE, cache = FALSE}
@@ -161,10 +183,32 @@ knitr::read_chunk("overviewer.r")
 source("overviewer.r")
 r <- overviewer(inpath, outpath, talky = T)
 overvw_plots <- list.files(file.path(outpath, "overview"), full.names = TRUE)
-imgs_markdown <- paste0("![](", overvw_plots, ")", collapse = "\n\n")
-asis_output(imgs_markdown) # Generate clickableimage HTML tags imgs_html 
 ```
 
+```{r, figure_3, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+filepath <- file.path(outpath, "overview", "group_plots.png")
+render_fig(filepath)
+```
+```{r, figure_4, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+filepath <- file.path(outpath, "overview", "i_plots.png")
+render_fig(filepath)
+```
+```{r, figure_5, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+filepath <- file.path(outpath, "overview", "c_plots.png")
+render_fig(filepath)
+```
+```{r, figure_6, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+filepath <- file.path(outpath, "overview", "m_plots.png")
+render_fig(filepath)
+```
+```{r, figure_7, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+filepath <- file.path(outpath, "overview", "p_plots.png")
+render_fig(filepath)
+```
+```{r, figure_8, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+filepath <- file.path(outpath, "overview", "r_plots.png")
+render_fig(filepath)
+```
 
 ## Spectral analysis
 ### Overview
@@ -201,7 +245,12 @@ spec_index <- spec_checker(inpath, path) # checks the files and returns the list
 
 source("spec_overviewer.r")
 specovrw <- spec_overviewer(spec_index, 1) # provides a visualization of GCMS data for the first spectrum in the folder
-plot_saver(specovrw$plot, outpath, "spectrum_overview.png", 10, 10, 100)
+filepath <- file.path(outpath, "spectrum_overview.png")
+plot_saver(specovrw$plot, filepath, 10, 10, 100)
+```
+
+```{r, figure_9, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+render_fig(filepath)
 ```
 
 ### PCA
@@ -246,7 +295,11 @@ knitr::read_chunk("process_tics.r")
 ```{r, class.source = 'fold-show'}
 source("process_tics.r")
 ticz <- process_tics(data = e, index_tbl = spec_index, only_high_tic = F)
-plot_saver(ticz$plot, outpath, "tics_all.png", 10, 10, 100)
+filepath <- file.path(outpath, "tics_all.png")
+plot_saver(ticz$plot, filepath, 10, 10, 100)
+```
+```{r, figure_10, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+render_fig(filepath)
 ```
 
 **No prominent clustering**: With more variables than samples, PCA can overfit to noise, leading to misleading principal components. So our next step is to shrink the TIC data to only high intencity peaks of TICs, which have already been calculated by `ticsnpeaks` function above (the *hot* areas are accumulated from all the samples), for that we call `process_tics` function again with `only_high_tic` parameter set to `TRUE`.
@@ -254,7 +307,11 @@ plot_saver(ticz$plot, outpath, "tics_all.png", 10, 10, 100)
 ```{r, class.source = 'fold-show'}
 source("process_tics.r")
 ticz <- process_tics(data = e, index_tbl = spec_index, only_high_tic = T)
-plot_saver(ticz$plot, outpath, "tics_sel.png", 10, 10, 100)
+filepath <- file.path(outpath, "tics_sel.png")
+plot_saver(ticz$plot, filepath, 10, 10, 100)
 ```
 
+```{r, figure_11, class.source = 'fold-show', echo = FALSE, results = 'asis'}
+render_fig(filepath)
+```
 Now we can see some clustering in the space of the first two principal components, where the period (Shang & Zhou) might also have an impact. First five PC-s (out of 105) explain most of the variance, and first two of them have the most pronounced power. Each principal component is a linear combination of all original variables (`total ion intencities per retention time`), where each variable is multiplied by a specific coefficient known as a `loading`. The variables with bigger absolute loadings in PC1 and PC2 have stronger impact on visual clusterization observed at the plot of PC1 and PC2. We have selected those variables, which were 0.95 to maximum loading in PC1 and PC2 and listed them as a `noteworthy peaks` retention times list, the baze_mz is also presented for those peaks. The baze_mz is what is the m/z value of the most intense peak in a given retention time. **It might be interesting to understand if the discovered noteworthy peaks do have some meaning for the residue analysis.**

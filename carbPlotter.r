@@ -7,7 +7,6 @@ carb_plotter <- function(mode = "by_site_and_period", gap = 250) {
         source("plot_carb_pattern.r")
         source("settings.r")
         source("load_pckgs.r")
-        source("plot_saver.r")
         dependencies <- c("readxl", "dplyr", "tidyr", "ggplot2", "grid", "gridExtra", "purrr", "sysfonts", "showtext", "knitr")
         invisible(lapply(dependencies, load_pkg))
         sysfonts::font_add_google("Open Sans", "opensans")

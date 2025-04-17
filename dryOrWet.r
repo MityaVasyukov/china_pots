@@ -4,7 +4,6 @@ dryOrWet <- function(mode) {
         source("buildCondition.r")
         source("load_pckgs.r")
         source("settings.r")
-        source("plot_saver.r")
         dependencies <- c("readxl", "dplyr", "tidyr", "ggplot2", "rlang", "hrbrthemes", "ggtext", "ggpubr", "colorspace", "patchwork", "knitr")
         invisible(lapply(dependencies, load_pkg))
         grDevices::windowsFonts(opensans = windowsFont("Open Sans"))

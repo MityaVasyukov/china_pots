@@ -190,7 +190,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                     ) %>%
                 dplyr::ungroup() %>%
                 dplyr::select(-dynastie, -dplyr::all_of(chumpsy_vars), -comment) %>%
-                dplyr::rename_with(~ paste0("g.", .), -id)
+                dplyr::rename_with(~ paste0("r.", .), -id)
 
         # All the tables are ready for joining nopw
            info.variable_prefix <- c(
@@ -198,7 +198,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                 "\t i.* = Information about the specimen",
                 "\t m.* = Measurements of the specimen",
                 "\t c.* = Carbonization coloration analysis",
-                "\t g.* = GCMS data",
+                "\t r.* = Residue analysis",
                 "\t p.* = Petrography analysis data"
             )
 
@@ -210,8 +210,8 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
 
         # Fusing
             data <- arch %>%
-                dplyr::inner_join(gcms, by = "id") %>%
-                dplyr::inner_join(petro, by = "id")
+                dplyr::left_join(gcms, by = "id") %>%
+                dplyr::left_join(petro, by = "id")
             
             if (nrow(data) == 0) {
                 stop("❌ data has no records!")
@@ -222,7 +222,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
             
 
             if (talky) {
-                message("⚠️ inner joining was used to link the data, use left_join to conserve unmatched records")
+                #message("⚠️ inner joining was used to link the data, use left_join to conserve unmatched records")
                 
                 intersected_ids <- length(Reduce(intersect, list(arch$id, gcms$id, petro$id)))
             
@@ -282,7 +282,22 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
 
         for (var in unique(numeric_data$variable)) {
             # fetch the var data
-                df_var <- numeric_data %>% dplyr::filter(variable == var) %>% dplyr::filter(is.finite(value))
+                df_var <- numeric_data %>%
+                    dplyr::filter(variable == var) %>%
+                    dplyr::filter(is.finite(value)) #%>%
+                    #filter( # filtering outliers out
+                    #    value >= quantile(value, .25) - 1.5*IQR(value),
+                    #    value <= quantile(value, .75) + 1.5*IQR(value)
+                    #)
+                if (var %in% c("m.rim", "m.orifice")) {
+                    df_var <- df_var %>%
+                        filter(value < 50)
+                } else if (var == "m.cord_mark_width") {
+                    df_var <- df_var %>%
+                        filter(value < 15)
+                } #! you can do better...
+
+
                 info <- var_info[[var]]
             
             # count sample sizes
@@ -296,12 +311,12 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                     ) %>%
                     dplyr::mutate( # If all values фку identical or NA, offset to 0
                         range   = ifelse(!is.na(y_min) & y_min != y_max, y_max - y_min, 0),
-                        label_y = y_min - 0.05 * range   # 5% below the min
+                        label_y = y_min - 0.1 * range
                     )
 
             # Boxplot the variable
                 p <- ggplot2::ggplot(df_var, ggplot2::aes(x = group, y = value)) +
-                    ggplot2::geom_boxplot() +
+                    ggplot2::geom_boxplot(outlier.colour = "red") +
                     ggplot2::geom_text(
                         data = counts,
                         aes(x = group, y = label_y, label = paste("n =", n)),
@@ -317,7 +332,7 @@ overviewer <- function(inpath, savepath, save = FALSE, talky = TRUE) {
                     ggplot2::theme_minimal() +
                     coord_cartesian(clip = "off") +
                     theme(
-                        axis.text  = element_text(size = 6),
+                        axis.text  = element_text(size = 8),
                         axis.title = element_text(size = 6),
                         plot.title = element_text(size = 10),
                         plot.subtitle = element_text(size = 6),
